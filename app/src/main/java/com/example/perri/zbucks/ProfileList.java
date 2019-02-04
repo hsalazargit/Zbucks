@@ -25,12 +25,4 @@ public class ProfileList extends AppCompatActivity {
             }
         });
     }
-
-
-    //build http request
-
-    //get profiles
-
-
-
 }
