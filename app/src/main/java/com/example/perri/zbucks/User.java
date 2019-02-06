@@ -2,11 +2,12 @@ package com.example.perri.zbucks;
 
 import com.google.gson.Gson;
 
-public class User {
+public class User extends Item{
     private long id;
     private String firstName;
     private String lastName;
     private UserType userType;
+    private int balance;
 
     // Setters
     public void setId(long id) {
@@ -23,6 +24,10 @@ public class User {
 
     public void setUserType(UserType userType) {
         this.userType = userType;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 
     // Getters
@@ -54,6 +59,10 @@ public class User {
         return this.userType;
     }
 
+    public int getBalance() {
+        return this.balance;
+    }
+
     @Override
     public String toString() {
         //return new Gson().toJson(this);]
@@ -63,12 +72,12 @@ public class User {
         sb.append("FirstName: " + this.getFirstName() + "\n");
         sb.append("Last Name: " + this.getLastName() + "\n");
         sb.append("User Type: " + this.getUserType().toString() + "\n");
+        sb.append("Current balance: " + this.getBalance() + "\n");
         sb.append("ID: " + this.getId() + "\n");
 
         return sb.toString();
     }
 }
-
 
 enum UserType{
     parent,

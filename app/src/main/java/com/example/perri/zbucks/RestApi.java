@@ -1,12 +1,11 @@
 package com.example.perri.zbucks;
 
+import android.content.Context;
 import android.util.Log;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,34 +24,27 @@ public class RestApi
     private static final String CHILDREN_OF_USERID_ENDPOINT = "/children/%s";
     private static final String USER_BY_ID_ENDPOINT = "users/%s";
 
-    private RequestQueue requestQueue;
-
-    public RestApi(MainActivity _this)
-    {
-        requestQueue= Volley.newRequestQueue(_this);
-    }
-
-    public void GetUsers(ServerResponseCallback callback) {
+    public static void GetUsers(ServerResponseCallback callback, Context _this) {
         Log.d("REST API", "Get users");
 
-        ApiRequest(USER_LIST_ENDPOINT, callback);
+        ApiRequest(USER_LIST_ENDPOINT, callback, _this);
     }
 
-    public void GetChildrenOfParent(String id, ServerResponseCallback callback) {
+    public static void GetChildrenOfParent(String id, ServerResponseCallback callback, Context _this) {
         Log.d("REST API", "GetChildrenOfUser: " + id);
 
         String endpoint = String.format(CHILDREN_OF_USERID_ENDPOINT, id);
-        ApiRequest(endpoint, callback);
+        ApiRequest(endpoint, callback, _this);
     }
 
-    public void GetUserById(String id, ServerResponseCallback callback){
+    public static void GetUserById(String id, ServerResponseCallback callback, Context _this){
         Log.d("REST API", "GET USER ID: " + id);
 
         String endpoint = String.format(USER_BY_ID_ENDPOINT, id);
-        ApiRequest(endpoint, callback);
+        ApiRequest(endpoint, callback, _this);
     }
 
-    private void ApiRequest(String ApiEndpoint, final ServerResponseCallback callback) {
+    private static void ApiRequest(String ApiEndpoint, final ServerResponseCallback callback, final Context _this) {
         JsonArrayRequest objectRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 ROOT_URL + ApiEndpoint,
@@ -79,7 +71,7 @@ public class RestApi
                         }
                         Log.d("Response - raw", response.toString());
 
-                        callback.onSuccessResponse(userList);
+                        callback.onSuccessResponse(userList, _this);
                     }
                 },
                 new Response.ErrorListener() {
@@ -90,6 +82,6 @@ public class RestApi
                 }
         );
 
-        requestQueue.add(objectRequest);
+        Singleton.getInstance(_this).addToRequestQueue(objectRequest);
     }
 }
