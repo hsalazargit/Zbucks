@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -29,14 +30,24 @@ public class ProfileListActivity extends AppCompatActivity {
             {
                 Log.d("Results: ", res.toString());
 
-                ArrayList<Item> itemList = new ArrayList<>(res.size());
+                ArrayList<Item> itemList = new ArrayList<>();
                 itemList.addAll(res);
 
                 // place result list into adapter for display
-                Adapter adapter = new Adapter(context, itemList, AdapterType.profileCard);
+                Adapter adapter = new Adapter(context, itemList, AdapterType.profileCard, new ProfileCardListener() {
+                    @Override
+                    public void buttonUpOnClick(View v, int position){
+                        Log.d("LISTENER: ", "Up button clicked on item: " + position);
+
+                    }
+
+                    @Override
+                    public void buttonDownOnClick(View v, int position){
+                        Log.d("LISTENER: ", "Down button clicked on item: " + position);
+                    }
+                });
 
                 recyclerView.setAdapter(adapter);
-
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             }
         }, this);

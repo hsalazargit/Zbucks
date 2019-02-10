@@ -13,11 +13,13 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
     private Context context;
     private ArrayList<Item> data;
     private AdapterType adapterType;
+    public AdapterListener onClickListener;
 
-    public Adapter(Context context, ArrayList<Item> data, AdapterType adapterType) {
+    public Adapter(Context context, ArrayList<Item> data, AdapterType adapterType, AdapterListener listener) {
         this.context = context;
         this.data = data;
         this.adapterType = adapterType;
+        this.onClickListener = listener;
     }
 
     @NonNull
@@ -26,14 +28,9 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.card_profile, parent, false);
 
-        if (adapterType == AdapterType.profileCard)
-        {
-            return new ViewHolderProfileCard(view);
-        }
-
         switch (adapterType) {
             case profileCard:
-                return new ViewHolderProfileCard(view);
+                return new ViewHolderProfileCard(view, (ProfileCardListener) onClickListener);
             case parentCard:
                 // see ViewHolderProfileCard class for example
             default:
@@ -50,6 +47,9 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
     public int getItemCount() {
         return data.size();
     }
+}
+
+interface AdapterListener {
 }
 
 // wrapper class used to data lists intended to
