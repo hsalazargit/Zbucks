@@ -9,47 +9,65 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class ProfileListActivity extends AppCompatActivity {
+    // The RecycleView used in this activity
+    private RecyclerView _recyclerView;
+    // The adapter used to bind User objects in the recycleViewer
+    private Adapter _adapter;
+    // the parent id for children being displayed in this activity
+    private String _parentId = "3"; // TODO: need to pass this value as param from the main activity, static for now
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_list);
+        this.setContentView(R.layout.activity_profile_list);
 
-        Window w = getWindow();
-        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        // initialize key components
+        this.initViewAdapter();
+        this.initChildrenProfileCards();
+    }
 
-        final RecyclerView recyclerView = findViewById(R.id.recycleView_list);
+    private void initViewAdapter() {
+        // create recycleView and adapter for this activity
+        _recyclerView = findViewById(R.id.recycleView_list);
 
-        RestApi.GetChildrenOfParent("7", new ServerResponseCallback() {
+        _adapter = new Adapter(this, new ArrayList<Item>(), AdapterType.profileCard, new ProfileCardListener() {
             @Override
-            public void onSuccessResponse(ArrayList<User> res, Context context)
+            public void buttonUpOnClick(View v, int position){
+                Log.d("LISTENER: ", "Up button clicked on item: " + position);
+            }
+
+            @Override
+            public void buttonDownOnClick(View v, int position){
+                Log.d("LISTENER: ", "Down button clicked on item: " + position);
+            }
+        });
+
+        // attach adapter
+        _recyclerView.setAdapter(_adapter);
+        _recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void initChildrenProfileCards() {
+        RestApi.GetChildrenOfParent(_adapter, _parentId, this, new ServerResponseCallback() {
+            @Override
+            public void onSuccessResponse(Adapter adapter, ArrayList<User> res, Context context)
             {
                 Log.d("Results: ", res.toString());
 
                 ArrayList<Item> itemList = new ArrayList<>();
                 itemList.addAll(res);
 
-                // place result list into adapter for display
-                Adapter adapter = new Adapter(context, itemList, AdapterType.profileCard, new ProfileCardListener() {
-                    @Override
-                    public void buttonUpOnClick(View v, int position){
-                        Log.d("LISTENER: ", "Up button clicked on item: " + position);
-
-                    }
-
-                    @Override
-                    public void buttonDownOnClick(View v, int position){
-                        Log.d("LISTENER: ", "Down button clicked on item: " + position);
-                    }
-                });
-
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                // place result list into adapter for display, and notify update
+                adapter.setData(itemList, true);
             }
-        }, this);
+        });
     }
+
 }

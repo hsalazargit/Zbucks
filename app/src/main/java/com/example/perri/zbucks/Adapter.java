@@ -22,6 +22,19 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
         this.onClickListener = listener;
     }
 
+    // Method allows us to update our data for this adapter. Useful when data
+    // is being retrieved by an async method, and we need to init the adapter
+    // first with an empty arrayList. This method will call notifyDataSetChanged() if notifyChange == true;
+    public void setData(ArrayList<Item> newData, boolean notifyChange)
+    {
+        this.data = newData;
+
+        if (notifyChange)
+        {
+            this.notifyDataSetChanged();
+        }
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
@@ -30,7 +43,7 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
 
         switch (adapterType) {
             case profileCard:
-                return new ViewHolderProfileCard(view, (ProfileCardListener) onClickListener);
+                return new ViewHolderProfileCard(view, (ProfileCardListener) onClickListener, this.context);
             case parentCard:
                 // see ViewHolderProfileCard class for example
             default:
